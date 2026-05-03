@@ -1,33 +1,37 @@
 {
   "version": 1,
-  "author": "Flash Flood Detector",
+  "author": "Anonymous generator",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-arduino-uno", "id": "uno", "top": -50, "left": -50, "attrs": {} },
-    { "type": "wokwi-breadboard-half", "id": "bb", "top": 198.6, "left": -93.2, "attrs": {} },
     {
-      "type": "wokwi-pushbutton",
-      "id": "btn_rain",
-      "top": 63.8,
-      "left": 297.6,
-      "attrs": { "color": "blue", "label": "Rain Tip" }
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
     },
     {
       "type": "wokwi-potentiometer",
-      "id": "pot_soil",
-      "top": 46.7,
-      "left": -249.8,
-      "attrs": { "label": "Soil Moisture" }
+      "id": "soil_sensor",
+      "top": -90,
+      "left": 160,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "rain_gauge",
+      "top": 90,
+      "left": 160,
+      "attrs": { "color": "blue" }
     }
   ],
   "connections": [
-    [ "uno:5V", "bb:tp.1", "red", [ "v0" ] ],
-    [ "uno:GND.2", "bb:tn.1", "black", [ "v0" ] ],
-    [ "pot_soil:GND", "bb:tn.2", "black", [ "v0" ] ],
-    [ "pot_soil:VCC", "bb:tp.2", "red", [ "v0" ] ],
-    [ "pot_soil:SIG", "uno:A0", "yellow", [ "v0" ] ],
-    [ "btn_rain:2.l", "uno:2", "green", [ "v0" ] ],
-    [ "btn_rain:1.l", "bb:tn.3", "black", [ "v0" ] ]
+    [ "esp:3V3", "soil_sensor:VCC", "red", [ "v0" ] ],
+    [ "esp:GND.1", "soil_sensor:GND", "black", [ "v0" ] ],
+    [ "esp:34", "soil_sensor:SIG", "blue", [ "v0" ] ],
+    [ "esp:5", "rain_gauge:1.l", "green", [ "v0" ] ],
+    [ "esp:GND.2", "rain_gauge:2.l", "black", [ "v0" ] ],
+	[ "esp:TX", "$serialMonitor:RX", "", [] ], [ "esp:RX", "$serialMonitor:TX", "", [] ]
   ],
   "dependencies": {}
 }

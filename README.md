@@ -2,43 +2,44 @@
 
 # Flash flood detection sensor design (Fritzing)
 
-The hardware design maps the electrical connections necessary for the Flash Flood Predictor. The system uses an Arduino Uno as the central controller, gathering data from environmental sensors and triggering a remote cloud warning via Wi-Fi. 
+The design illustrates a system for Flash flood detection using rain gauge and soil moisture sensor. The system uses an ESP32 as the central controller, gathering data from the sensors and triggering a remote cloud warning via Wi-Fi. 
 
 **Components and Functions:**
-* Arduino Uno
+* ESP32
 * Capacitive Soil Moisture Sensor
 * Pushbutton (Rain Gauge)
-* Adafruit HUZZAH ESP8266 - Wi-Fi module.
 * Breadboard
 
 **Wiring Connections:**
-* **Power & Ground Rails:** Arduino **5V** connected to the top Red rail. Arduino **GND** connected to the top Blue rail.
-* **Soil Moisture Sensor:** Signal Pin to Arduino **A0**, VCC to the top **Red (5V) rail**, GND to the top **Blue (GND) rail**.
-* **Rain Gauge** One leg to Arduino **Pin 2** (hardware interrupt), diagonal leg to the top **Blue (GND) rail** (relying on the Arduino's internal pull-up resistor).
-* **ESP8266** TX to Arduino **Pin 10**, RX to Arduino **Pin 11**, V+ connected directly to Arduino **3.3V** (bypassing the 5V breadboard rail for safety), GND to the top **Blue (GND) rail**.
+* ESP32 **3V3** connected to the top Red rail. ESP32 **GND** connected to the top Blue rail.
+* **Soil Moisture Sensor:** OUT Pin to ESP32 **Pin A**, 3V to ESP **3V**, GND to the top **Blue (GND) rail**.
+* **Rain Gauge:** One leg to ESP32 **Pin 5** (hardware interrupt), diagonal leg to the top **Blue (GND) rail**.
 
 ---
 
 # Firmware implementation
 
-The firmware evaluates flash flood risk by comparing rainfall intensity against the current soil moisture. For the evaluation, the implementation uses soil moisture limit 80% and precipitation limit 5 times 
+The firmware evaluates flash flood risk by comparing precipitation intensity against the current soil moisture. For the evaluation, the implementation uses soil moisture 80% and precipitation 5 tips limit. When the soil moisture and precipitation tips reach, the system sends alert messages to the server.
 
 **Core Logic:**
-1. **Hardware Interrupts:** A debounce-protected interrupt on Pin 2 registers rapid clicks from the rain gauge tipping bucket, ensuring no data is lost during heavy downpours.
-2. **Circular Buffer (Rain Intensity):** The system stores rainfall data in an array representing a rolling time window. As time passes, old data drops off and new data is added, calculating the true *rate* of rainfall rather than just total volume.
-3. **Soil Saturation Mapping:** The analog reading from A0 is mapped to a 0-100% saturation scale. 
-4. **Flash flood risk evaluation:** 
-   * **NONE:** Soil is absorbing rain efficiently (< 80% saturation).
-   * **WARNING:** Soil is highly saturated (>= 80%), but current rain intensity is below the 5-tip precipitation limit.
-   * **ALERT:** Soil is highly saturated (>= 80%) AND rolling rain intensity meets or exceeds the 5-tip precipitation limit.
-5. **Simulated JSON Telemetry:** The firmware formats the current soil data, rain intensity, and alert status into a standardized JSON string (e.g., `{"node":"Arduino_1", "soil_pct":85, "rain_tips":6, "flood_alert":"true"}`). Instead of using physical hardware pins, this payload is printed directly to the Serial Monitor every 10 seconds to simulate cloud transmission.
+1. Register interrupt on Pin 5 to listen to precipitation events.
+2. Store precipitation data in an array representing a rolling time window. Every second, old data drops off and new data is added to monitor the *rate* of precipitation in the last 10 seconds.
+3. Soil saturation - the analog reading from Pin 34 is mapped to a 0-100% soil saturation. 
+4. Flash flood risk evaluation: 
+   * **NONE:** Soil is able to absorb more precipitation (< 80% saturation).
+   * **WARNING:** Soil is highly saturated (>= 80%), but current precipitation intensity is below the 5 tips limit.
+   * **ALERT:** Soil is highly saturated (>= 80%) and rolling precipitation intensity is equal or greater than the 5 tips limit.
+5. JSON data - the firmware formats the current soil data, rain intensity, and alert status into a standardized JSON string (e.g., `{"node":"ESP32_1", "soil_pct":85, "pre_tips":6, "flood_alert":"true"}`). This payload is transmitted directly over Wi-Fi via an HTTP POST request every 10 seconds to push data to the cloud.
+
 ---
 
 # Simulation in Wokwi
 
-The firmware implementation is tested on Wokwi simulation. A simplified setup of the Flash floor detector system proposed in Fritzing is defined using `diagram.json` file to simulate the components in the design.
+The firmware implementation is tested on Wokwi simulation. A simplified setup of the Flash flood detector system proposed in Fritzing is defined using the `diagram.json` file to simulate the components in the design.
 
 **Simulation Setup:**
-* **Soil Sensor:** A **Rotary Potentiometer** is wired to Pin A0. Dragging the dial simulates the soil transitioning from 0% (bone dry) to 100% (fully saturated)."
-* **Rain Gauge:** The interactive blue **Pushbutton** wired to Pin 2 allows the user to manually trigger the hardware interrupt and simulate precipitation.
-* **Flash flood alert over Wi-Fi:** Because Wokwi does not support ESP8266 component in the Arduino Uno view, in this simulation we only print JSON payloads to the console to prove that the Arduino generates the correct data.
+* **Soil Sensor:** A **Rotary Potentiometer** is wired to Pin 34. By dragging the dial, we csimulate the soil moisture level from 0% to 100% (fully saturated).
+* **Rain Gauge:** A **Pushbutton** wired to Pin 5 allows manually trigger the hardware interrupt and simulate precipitation.
+* **Flash flood alert over Wi-Fi:** Using Wi-Fi function in ESP32,  JSON payloads are actively sent to a mock server via HTTP POST to prove data transmission over network.
+
+https://wokwi.com/projects/463029982550430721
