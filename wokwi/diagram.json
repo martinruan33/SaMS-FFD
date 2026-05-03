@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "author": "Flash Flood Detector",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": -50, "left": -50, "attrs": {} },
+    { "type": "wokwi-breadboard-half", "id": "bb", "top": 198.6, "left": -93.2, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_rain",
+      "top": 63.8,
+      "left": 297.6,
+      "attrs": { "color": "blue", "label": "Rain Tip" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot_soil",
+      "top": 46.7,
+      "left": -249.8,
+      "attrs": { "label": "Soil Moisture" }
+    }
+  ],
+  "connections": [
+    [ "uno:5V", "bb:tp.1", "red", [ "v0" ] ],
+    [ "uno:GND.2", "bb:tn.1", "black", [ "v0" ] ],
+    [ "pot_soil:GND", "bb:tn.2", "black", [ "v0" ] ],
+    [ "pot_soil:VCC", "bb:tp.2", "red", [ "v0" ] ],
+    [ "pot_soil:SIG", "uno:A0", "yellow", [ "v0" ] ],
+    [ "btn_rain:2.l", "uno:2", "green", [ "v0" ] ],
+    [ "btn_rain:1.l", "bb:tn.3", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
