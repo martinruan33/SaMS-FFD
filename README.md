@@ -4,6 +4,8 @@
 
 The design illustrates a system for Flash flood detection using rain gauge and soil moisture sensor. The system uses an ESP32 as the central controller, gathering data from the sensors and triggering a remote cloud warning via Wi-Fi. 
 
+<img src="fritzing/Sensors_and_Monitoring_Systems_final_project_bb.jpg" width="500" alt="Fritzing design">
+
 **Components and Functions:**
 * ESP32
 * Capacitive Soil Moisture Sensor
@@ -11,9 +13,9 @@ The design illustrates a system for Flash flood detection using rain gauge and s
 * Breadboard
 
 **Wiring Connections:**
-* ESP32 **3V3** connected to the top Red rail. ESP32 **GND** connected to the top Blue rail.
-* **Soil Moisture Sensor:** OUT Pin to ESP32 **Pin A**, 3V to ESP **3V**, GND to the top **Blue (GND) rail**.
-* **Rain Gauge:** One leg to ESP32 **Pin 5** (hardware interrupt), diagonal leg to the top **Blue (GND) rail**.
+* ESP32 **GND** connected to the breadboard blue rail.
+* Soil Moisture Sensor: **OUT** Pin to ESP32 **Pin A**, **3V** to ESP32 **3V**, **GND** to the breadboard blue rail.
+* Rain Gauge: One leg to ESP32 **Pin 5**, diagonal leg to the breadboard blue rail.
 
 ---
 
